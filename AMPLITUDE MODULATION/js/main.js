@@ -12,14 +12,65 @@ let graphRep = document.querySelector("#graphRep");
 let oscilloscope = document.querySelector("#oscilloscope");
 let spectrum = document.querySelector("#spectrum");
 let heading = document.querySelector("#heading");
+let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
 
 let carrierAmp = 100;
-let messageAmp = 100;
+let messageAmp = 0;
 let graphType = "Oscilloscope";
 
 let darkCyan = "#00796b";
 let lightCyan = "#b2dfdb";
 let light = "#eee";
+
+let context = oscilloscopeCanvas.getContext("2d");
+var messageYPos = [],
+  carrierYPos = [],
+  amplitude = 30,
+  frequency = 20,
+  t = 0;
+const PI = Math.PI;
+const drawSignals = (t) => {
+  displaySignalLabel();
+  drawMessageSignal(t);
+};
+function displaySignalLabel() {
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  context.font = "16px Arial";
+  context.fillText("m(t)", 10, 20);
+  context.fillText("c(t)", 10, oscilloscopeCanvas.height / 3 + 20);
+  context.fillText("am(t)", 10, (2 * oscilloscopeCanvas.height) / 3 + 20);
+  context.closePath();
+}
+const drawMessageSignal = (t) => {
+  drawSignal(messageAmp, t, messageYPos, oscilloscopeCanvas.height / 3 / 2);
+};
+
+const drawCarrierSignal = (t) => {
+  drawSignal(carrierAmp, t, carrierYPos, oscilloscopeCanvas.height / 3 / 2);
+};
+
+const drawSignal = (amplitude, t, arr, yOffset) => {
+  let y = amplitude * Math.cos(2 * PI * frequency * t);
+  arr.unshift(y);
+  for (let i = 0; i < arr.length; i++) {
+    context.beginPath();
+    context.fillStyle = darkCyan;
+    context.arc(i, yOffset - arr[i], 2, 0, 2 * PI);
+    context.fill();
+    context.closePath();
+    if (arr.length > oscilloscopeCanvas.width) {
+      arr.pop();
+    }
+  }
+};
+function loop() {
+  context.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
+  t += PI / 180 / 100;
+  drawSignals(t);
+  requestAnimationFrame(loop);
+}
+loop();
 
 const calculateModulationIndex = () => {
   modulationIndex.value = (messageAmp / carrierAmp).toFixed(3);
@@ -52,67 +103,15 @@ const findModulation = () => {
 };
 
 const handleAmplitudeCarrier = (event) => {
-  if (carrierAmp == 120 && event.target.value < 120) {
-    carrierAmp = 100;
-    amplitudeCarrier.value = carrierAmp;
-  } else if (carrierAmp == 140 && event.target.value < 140) {
-    carrierAmp = 120;
-    amplitudeCarrier.value = carrierAmp;
-  } else if (carrierAmp == 160 && event.target.value < 160) {
-    carrierAmp = 140;
-    amplitudeCarrier.value = carrierAmp;
-  } else if (carrierAmp == 180 && event.target.value < 180) {
-    carrierAmp = 160;
-    amplitudeCarrier.value = carrierAmp;
-  } else if (event.target.value < 100) {
-    carrierAmp = 100;
-    amplitudeCarrier.value = carrierAmp;
-  } else if (event.target.value > 100 && event.target.value < 120) {
-    carrierAmp = 120;
-    amplitudeCarrier.value = carrierAmp;
-  } else if (event.target.value > 120 && event.target.value < 140) {
-    carrierAmp = 140;
-    amplitudeCarrier.value = carrierAmp;
-  } else if (event.target.value > 140 && event.target.value < 160) {
-    carrierAmp = 160;
-    amplitudeCarrier.value = carrierAmp;
-  } else {
-    carrierAmp = 180;
-    amplitudeCarrier.value = carrierAmp;
-  }
+  carrierAmp = event.target.value;
+  amplitudeCarrier.value = carrierAmp;
   findModulation();
   calculateModulationIndex();
 };
 
 const handleAmplitudeMessage = (event) => {
-  if (messageAmp == 120 && event.target.value < 120) {
-    messageAmp = 100;
-    amplitudeMessage.value = messageAmp;
-  } else if (messageAmp == 140 && event.target.value < 140) {
-    messageAmp = 120;
-    amplitudeMessage.value = messageAmp;
-  } else if (messageAmp == 160 && event.target.value < 160) {
-    messageAmp = 140;
-    amplitudeMessage.value = messageAmp;
-  } else if (messageAmp == 180 && event.target.value < 180) {
-    messageAmp = 160;
-    amplitudeMessage.value = messageAmp;
-  } else if (event.target.value < 100) {
-    messageAmp = 100;
-    amplitudeMessage.value = messageAmp;
-  } else if (event.target.value > 100 && event.target.value < 120) {
-    messageAmp = 120;
-    amplitudeMessage.value = messageAmp;
-  } else if (event.target.value > 120 && event.target.value < 140) {
-    messageAmp = 140;
-    amplitudeMessage.value = messageAmp;
-  } else if (event.target.value > 140 && event.target.value < 160) {
-    messageAmp = 160;
-    amplitudeMessage.value = messageAmp;
-  } else {
-    messageAmp = 180;
-    amplitudeMessage.value = messageAmp;
-  }
+  messageAmp = event.target.value;
+  amplitudeMessage.value = messageAmp;
   findModulation();
   calculateModulationIndex();
 };

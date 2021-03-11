@@ -9,12 +9,14 @@
   width: 75%;
   height: 600px;
   background-color: #eee;
-  border-radius: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+#oscilloscope-canvas {
+  background-color: #eee;
 }
 
 /* Value Selector */
