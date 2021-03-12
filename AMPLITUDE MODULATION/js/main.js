@@ -13,25 +13,36 @@ let oscilloscope = document.querySelector("#oscilloscope");
 let spectrum = document.querySelector("#spectrum");
 let heading = document.querySelector("#heading");
 let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
+let power = document.querySelector("#power");
+let carrierSlider = document.querySelector("#carrier-slider");
+let messageSlider = document.querySelector("#message-slider");
 
-let carrierAmp = 100;
+let carrierAmp = 0;
 let messageAmp = 0;
+let messageFreq = 20;
+let carrierFreq = 100;
 let graphType = "Oscilloscope";
 
 let darkCyan = "#00796b";
 let lightCyan = "#b2dfdb";
 let light = "#eee";
+let isModulated = true;
 
 let context = oscilloscopeCanvas.getContext("2d");
 var messageYPos = [],
   carrierYPos = [],
-  amplitude = 30,
-  frequency = 20,
+  amYPos = [],
   t = 0;
 const PI = Math.PI;
 const drawSignals = (t) => {
   displaySignalLabel();
   drawMessageSignal(t);
+  drawCarrierSignal(t);
+  drawAmplitudeModulationSignal(
+    t,
+    amYPos,
+    (2 * oscilloscopeCanvas.height) / 3 + oscilloscopeCanvas.height / 3 / 2
+  );
 };
 function displaySignalLabel() {
   context.beginPath();
@@ -43,14 +54,45 @@ function displaySignalLabel() {
   context.closePath();
 }
 const drawMessageSignal = (t) => {
-  drawSignal(messageAmp, t, messageYPos, oscilloscopeCanvas.height / 3 / 2);
+  drawSignal(
+    messageAmp,
+    messageFreq,
+    t,
+    messageYPos,
+    oscilloscopeCanvas.height / 3 / 2
+  );
 };
 
 const drawCarrierSignal = (t) => {
-  drawSignal(carrierAmp, t, carrierYPos, oscilloscopeCanvas.height / 3 / 2);
+  drawSignal(
+    carrierAmp,
+    carrierFreq,
+    t,
+    carrierYPos,
+    oscilloscopeCanvas.height / 3 + oscilloscopeCanvas.height / 3 / 2
+  );
 };
 
-const drawSignal = (amplitude, t, arr, yOffset) => {
+const drawAmplitudeModulationSignal = (t, amArr, yOffset) => {
+  let tempMessageValue = messageAmp * Math.cos(2 * PI * messageFreq * t);
+  let y =
+    (parseInt(carrierAmp) + tempMessageValue) *
+    Math.cos(2 * PI * carrierFreq * t);
+
+  amArr.unshift(y);
+  for (let i = 0; i < amArr.length; i++) {
+    context.beginPath();
+    context.fillStyle = darkCyan;
+    context.arc(i, yOffset - amArr[i], 2, 0, 2 * PI);
+    context.fill();
+    context.closePath();
+    if (amArr.length > oscilloscopeCanvas.width) {
+      amArr.pop();
+    }
+  }
+};
+
+const drawSignal = (amplitude, frequency, t, arr, yOffset) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
   arr.unshift(y);
   for (let i = 0; i < arr.length; i++) {
@@ -75,17 +117,19 @@ loop();
 const calculateModulationIndex = () => {
   modulationIndex.value = (messageAmp / carrierAmp).toFixed(3);
 };
+const calculatePower = () => {
+  power.value = (Math.pow(messageAmp / Math.sqrt(2), 2) / 2).toFixed(2);
+};
 
 const findModulation = () => {
-  console.log(carrierAmp, messageAmp);
-  if (carrierAmp > messageAmp) {
+  if (carrierAmp < messageAmp) {
     overModulation.style["background-color"] = darkCyan;
     overModulation.style["color"] = lightCyan;
     modulation.style["background-color"] = lightCyan;
     modulation.style["color"] = darkCyan;
     underModulation.style["background-color"] = lightCyan;
     underModulation.style["color"] = darkCyan;
-  } else if (carrierAmp < messageAmp) {
+  } else if (carrierAmp > messageAmp) {
     overModulation.style["background-color"] = lightCyan;
     overModulation.style["color"] = darkCyan;
     modulation.style["background-color"] = lightCyan;
@@ -105,81 +149,97 @@ const findModulation = () => {
 const handleAmplitudeCarrier = (event) => {
   carrierAmp = event.target.value;
   amplitudeCarrier.value = carrierAmp;
+  carrierSlider.value = carrierAmp;
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 };
 
 const handleAmplitudeMessage = (event) => {
   messageAmp = event.target.value;
   amplitudeMessage.value = messageAmp;
+  messageSlider.value = messageAmp;
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 };
 
+carrierSlider.addEventListener("change", handleAmplitudeCarrier);
+messageSlider.addEventListener("change", handleAmplitudeMessage);
 amplitudeCarrier.addEventListener("change", handleAmplitudeCarrier);
 amplitudeMessage.addEventListener("change", handleAmplitudeMessage);
 
 amplitudeCarrierUp.addEventListener("click", () => {
-  if (carrierAmp <= 160) {
-    carrierAmp += 20;
+  if (carrierAmp < 50) {
+    carrierAmp += 1;
     amplitudeCarrier.value = carrierAmp;
   }
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 });
 
 amplitudeCarrierDown.addEventListener("click", () => {
-  if (carrierAmp >= 120) {
-    carrierAmp -= 20;
+  if (carrierAmp > 0) {
+    carrierAmp -= 1;
     amplitudeCarrier.value = carrierAmp;
   }
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 });
 
 amplitudeMessageUp.addEventListener("click", () => {
-  if (messageAmp <= 160) {
-    messageAmp += 20;
+  if (messageAmp < 50) {
+    messageAmp += 1;
     amplitudeMessage.value = messageAmp;
   }
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 });
 
 amplitudeMessageDown.addEventListener("click", () => {
-  if (messageAmp >= 120) {
-    messageAmp -= 20;
+  if (messageAmp > 0) {
+    messageAmp -= 1;
     amplitudeMessage.value = messageAmp;
   }
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 });
 
 modulation.addEventListener("click", () => {
-  carrierAmp = 140;
+  random = Math.floor(Math.random() * 51);
+  carrierAmp = random;
   amplitudeCarrier.value = carrierAmp;
-  messageAmp = 140;
+  messageAmp = random;
   amplitudeMessage.value = messageAmp;
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 });
 
 overModulation.addEventListener("click", () => {
-  carrierAmp = 160;
+  random = Math.floor(Math.random() * 8) + 8;
+  carrierAmp = random;
   amplitudeCarrier.value = carrierAmp;
-  messageAmp = 120;
+  messageAmp = 50 - random;
   amplitudeMessage.value = messageAmp;
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 });
 
 underModulation.addEventListener("click", () => {
-  carrierAmp = 120;
+  random = Math.floor(Math.random() * 8) + 8;
+  carrierAmp = 50 - random;
   amplitudeCarrier.value = carrierAmp;
-  messageAmp = 160;
+  messageAmp = random;
   amplitudeMessage.value = messageAmp;
   findModulation();
   calculateModulationIndex();
+  calculatePower();
 });
 
 graphRep.addEventListener("click", () => {

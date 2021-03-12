@@ -35,7 +35,7 @@
       >
         <div class="wave-container">
           <div id="oscilloscope">
-            <canvas id="oscilloscope-canvas" height="600" width="500"></canvas>
+            <canvas id="oscilloscope-canvas" height="600" width="600"></canvas>
           </div>
           <div id="spectrum" class="d-none">
             <img
@@ -87,6 +87,7 @@
       </div>
       <div class="col-3">
         <h3 class="cyan-heading">Carrier Signal</h3>
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label for="amplitudeCarrier" class="h5 m-0 font-weight-light"
             >Amplitude</label
@@ -98,7 +99,7 @@
               type="number"
               value="0"
               min="0"
-              max="100"
+              max="50"
             />
             <div class="quantity-nav">
               <button
@@ -116,6 +117,15 @@
             </div>
           </div>
         </div>
+        <input
+          type="range"
+          id="carrier-slider"
+          class="range-style"
+          value="0"
+          min="0"
+          max="50"
+        />
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="frequencyCarrier"
@@ -128,7 +138,7 @@
               name="frequencyCarrier"
               type="number"
               disabled="true"
-              value="15"
+              value="200"
             />
             <div class="quantity-nav">
               <button
@@ -144,6 +154,7 @@
             </div>
           </div>
         </div>
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="phaseCarrier"
@@ -174,6 +185,7 @@
         </div>
         <br />
         <h3 class="cyan-heading">Message Signal</h3>
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label for="amplitudeMessage" class="h5 m-0 font-weight-light"
             >Amplitude</label
@@ -185,7 +197,7 @@
               type="number"
               value="0"
               min="0"
-              max="100"
+              max="50"
             />
             <div class="quantity-nav">
               <button
@@ -203,6 +215,15 @@
             </div>
           </div>
         </div>
+        <input
+          type="range"
+          id="message-slider"
+          class="range-style"
+          value="0"
+          min="0"
+          max="50"
+        />
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="frequencyMessage"
@@ -215,7 +236,7 @@
               name="frequencyMessage"
               type="number"
               disabled="true"
-              value="10"
+              value="20"
             />
             <div class="quantity-nav">
               <button
@@ -231,6 +252,7 @@
             </div>
           </div>
         </div>
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="phaseMessage"
@@ -260,6 +282,7 @@
           </div>
         </div>
         <br />
+        <br />
         <div class="d-flex align-items-center justify-content-between">
           <h3 class="cyan-heading">Modulation Index</h3>
           <div class="quantity">
@@ -268,14 +291,21 @@
               name="modulationIndex"
               type="number"
               disabled="true"
-              value="1.000"
+              value="0.000"
             />
           </div>
         </div>
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <h3 class="cyan-heading">Power</h3>
           <div class="quantity">
-            <input id="power" name="power" type="number" disabled="true" />
+            <input
+              id="power"
+              name="power"
+              type="number"
+              value="00.00"
+              disabled="true"
+            />
           </div>
         </div>
         <br />
