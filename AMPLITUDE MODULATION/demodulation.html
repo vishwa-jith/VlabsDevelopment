@@ -23,9 +23,16 @@
     />
     <title>DEMODULATION - Amplitude</title>
   </head>
-  <body style="overflow-x: hidden">
+  <body style="overflow-x: hidden" class="mt-3">
     <div class="row d-flex justify-content-center" id="selectWave">
-      <div class="col-10">
+      <div class="col-9">
+        <button class="btn" onclick="location.href='/';">
+          <i
+            class="fa fa-arrow-left"
+            style="color: #00796b; font-size: 25px"
+            aria-hidden="true"
+          ></i>
+        </button>
         <h1 class="cyan-heading h2 font-weight-bold" id="heading">
           Demodulation
         </h1>
@@ -56,7 +63,14 @@
     </div>
     <div id="selectedWave" class="d-none">
       <div class="row">
-        <div class="col-8">
+        <div class="col-8 d-flex justify-content-around align-items-center">
+          <button class="btn" id="backButton">
+            <i
+              class="fa fa-arrow-left"
+              style="color: #00796b; font-size: 25px"
+              aria-hidden="true"
+            ></i>
+          </button>
           <h1 class="text-center cyan-heading" id="heading">Oscilloscope</h1>
         </div>
       </div>

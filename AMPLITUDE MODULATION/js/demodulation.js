@@ -11,6 +11,7 @@ let spectrum = document.querySelector("#spectrum");
 let graphRep = document.querySelector("#graphRep");
 let heading = document.querySelector("#heading");
 let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
+let backButton = document.querySelector("#backButton");
 
 let darkCyan = "#00796b";
 let lightCyan = "#b2dfdb";
@@ -227,4 +228,9 @@ graphRep.addEventListener("click", () => {
     oscilloscopeCanvas.classList.add("d-none");
   }
   heading.innerHTML = graphType;
+});
+backButton.addEventListener("click", () => {
+  selectWave.classList.remove("d-none");
+  selectedWave.classList.add("d-none");
+  currentCanvas = null;
 });

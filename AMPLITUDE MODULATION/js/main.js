@@ -213,8 +213,10 @@ modulation.addEventListener("click", () => {
   random = Math.floor(Math.random() * 51);
   carrierAmp = random;
   amplitudeCarrier.value = carrierAmp;
+  carrierSlider.value = carrierAmp;
   messageAmp = random;
   amplitudeMessage.value = messageAmp;
+  messageSlider.value = messageAmp;
   findModulation();
   calculateModulationIndex();
   calculatePower();
@@ -224,8 +226,10 @@ overModulation.addEventListener("click", () => {
   random = Math.floor(Math.random() * 8) + 8;
   carrierAmp = random;
   amplitudeCarrier.value = carrierAmp;
+  carrierSlider.value = carrierAmp;
   messageAmp = 50 - random;
   amplitudeMessage.value = messageAmp;
+  messageSlider.value = messageAmp;
   findModulation();
   calculateModulationIndex();
   calculatePower();
@@ -235,8 +239,10 @@ underModulation.addEventListener("click", () => {
   random = Math.floor(Math.random() * 8) + 8;
   carrierAmp = 50 - random;
   amplitudeCarrier.value = carrierAmp;
+  carrierSlider.value = carrierAmp;
   messageAmp = random;
   amplitudeMessage.value = messageAmp;
+  messageSlider.value = messageAmp;
   findModulation();
   calculateModulationIndex();
   calculatePower();

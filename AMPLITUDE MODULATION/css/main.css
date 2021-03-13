@@ -6,7 +6,6 @@
 }
 
 .wave-container {
-  width: 75%;
   height: 600px;
   background-color: #eee;
   overflow: hidden;
@@ -155,4 +154,14 @@ input[type="range"]::-moz-range-thumb {
     rgba(255, 255, 255, 0.8),
     transparent
   );
+}
+#oscilloscope-canvas1,
+#oscilloscope-canvas2,
+#oscilloscope-canvas3 {
+  cursor: pointer;
+  box-shadow: inset -2px -2px 8px white, inset 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+#oscilloscope-canvas {
+  box-shadow: inset -2px -2px 8px white, inset 2px 2px 8px rgba(0, 0, 0, 0.5);
 }
