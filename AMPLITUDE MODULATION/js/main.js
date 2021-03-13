@@ -147,7 +147,7 @@ const findModulation = () => {
 };
 
 const handleAmplitudeCarrier = (event) => {
-  carrierAmp = event.target.value;
+  carrierAmp = parseInt(event.target.value);
   amplitudeCarrier.value = carrierAmp;
   carrierSlider.value = carrierAmp;
   findModulation();
@@ -156,7 +156,7 @@ const handleAmplitudeCarrier = (event) => {
 };
 
 const handleAmplitudeMessage = (event) => {
-  messageAmp = event.target.value;
+  messageAmp = parseInt(event.target.value);
   amplitudeMessage.value = messageAmp;
   messageSlider.value = messageAmp;
   findModulation();
@@ -173,6 +173,7 @@ amplitudeCarrierUp.addEventListener("click", () => {
   if (carrierAmp < 50) {
     carrierAmp += 1;
     amplitudeCarrier.value = carrierAmp;
+    carrierSlider.value = carrierAmp;
   }
   findModulation();
   calculateModulationIndex();
@@ -183,6 +184,7 @@ amplitudeCarrierDown.addEventListener("click", () => {
   if (carrierAmp > 0) {
     carrierAmp -= 1;
     amplitudeCarrier.value = carrierAmp;
+    carrierSlider.value = carrierAmp;
   }
   findModulation();
   calculateModulationIndex();
@@ -193,6 +195,7 @@ amplitudeMessageUp.addEventListener("click", () => {
   if (messageAmp < 50) {
     messageAmp += 1;
     amplitudeMessage.value = messageAmp;
+    messageSlider.value = messageAmp;
   }
   findModulation();
   calculateModulationIndex();
@@ -203,6 +206,7 @@ amplitudeMessageDown.addEventListener("click", () => {
   if (messageAmp > 0) {
     messageAmp -= 1;
     amplitudeMessage.value = messageAmp;
+    messageSlider.value = messageAmp;
   }
   findModulation();
   calculateModulationIndex();
