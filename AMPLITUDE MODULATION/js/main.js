@@ -16,6 +16,7 @@ let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
 let power = document.querySelector("#power");
 let carrierSlider = document.querySelector("#carrier-slider");
 let messageSlider = document.querySelector("#message-slider");
+let spectrumCanvas = document.querySelector("#spectrum-canvas");
 
 let carrierAmp = 0;
 let messageAmp = 0;
@@ -29,6 +30,8 @@ let light = "#eee";
 let isModulated = true;
 
 let context = oscilloscopeCanvas.getContext("2d");
+let spectrumContext = spectrumCanvas.getContext("2d");
+
 var messageYPos = [],
   carrierYPos = [],
   amYPos = [],
@@ -114,6 +117,66 @@ function loop() {
 }
 loop();
 
+function displaySpectrumLabel(context) {
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  context.font = "16px Arial";
+  context.fillText("fc - fm", 130, 420);
+  context.fillText("fc", 295, 420);
+  context.fillText("fc + fm", 430, 420);
+  context.fillText("Vc", 295, 390 - 2 * carrierAmp);
+  context.fillText("mVc/2", 130, 390 - modulationIndex.value * carrierAmp);
+  context.fillText("mVc/2", 430, 390 - modulationIndex.value * carrierAmp);
+  context.closePath();
+}
+
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
+const drawSpectrum = () => {
+  spectrumContext.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
+  displaySpectrumLabel(spectrumContext);
+  spectrumContext.beginPath();
+  spectrumContext.fillStyle = darkCyan;
+  canvas_arrow(spectrumContext, 10, 400, 580, 400);
+  canvas_arrow(spectrumContext, 11, 400, 10, 400);
+  if (carrierAmp !== 0 && parseFloat(modulationIndex.value) !== 0) {
+    canvas_arrow(
+      spectrumContext,
+      150,
+      400,
+      150,
+      400 - parseFloat(modulationIndex.value) * carrierAmp
+    );
+    canvas_arrow(
+      spectrumContext,
+      450,
+      400,
+      450,
+      400 - parseFloat(modulationIndex.value) * carrierAmp
+    );
+  }
+  if (carrierAmp !== 0) {
+    canvas_arrow(spectrumContext, 300, 400, 300, 400 - 2 * carrierAmp);
+  }
+  spectrumContext.stroke();
+};
+
 const calculateModulationIndex = () => {
   modulationIndex.value = (messageAmp / carrierAmp).toFixed(3);
 };
@@ -153,6 +216,7 @@ const handleAmplitudeCarrier = (event) => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 };
 
 const handleAmplitudeMessage = (event) => {
@@ -162,6 +226,7 @@ const handleAmplitudeMessage = (event) => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 };
 
 carrierSlider.addEventListener("change", handleAmplitudeCarrier);
@@ -178,6 +243,7 @@ amplitudeCarrierUp.addEventListener("click", () => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 });
 
 amplitudeCarrierDown.addEventListener("click", () => {
@@ -189,6 +255,7 @@ amplitudeCarrierDown.addEventListener("click", () => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 });
 
 amplitudeMessageUp.addEventListener("click", () => {
@@ -200,6 +267,7 @@ amplitudeMessageUp.addEventListener("click", () => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 });
 
 amplitudeMessageDown.addEventListener("click", () => {
@@ -211,6 +279,7 @@ amplitudeMessageDown.addEventListener("click", () => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 });
 
 modulation.addEventListener("click", () => {
@@ -224,6 +293,7 @@ modulation.addEventListener("click", () => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 });
 
 overModulation.addEventListener("click", () => {
@@ -237,6 +307,7 @@ overModulation.addEventListener("click", () => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 });
 
 underModulation.addEventListener("click", () => {
@@ -250,6 +321,7 @@ underModulation.addEventListener("click", () => {
   findModulation();
   calculateModulationIndex();
   calculatePower();
+  drawSpectrum();
 });
 
 graphRep.addEventListener("click", () => {
@@ -264,4 +336,5 @@ graphRep.addEventListener("click", () => {
     oscilloscope.classList.add("d-none");
   }
   heading.innerHTML = graphType;
+  drawSpectrum();
 });

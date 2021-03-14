@@ -12,6 +12,7 @@ let graphRep = document.querySelector("#graphRep");
 let heading = document.querySelector("#heading");
 let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
 let backButton = document.querySelector("#backButton");
+let spectrumCanvas = document.querySelector("#spectrum-canvas");
 
 let darkCyan = "#00796b";
 let lightCyan = "#b2dfdb";
@@ -25,6 +26,8 @@ const PI = Math.PI;
 let context1 = oscilloscopeCanvas1.getContext("2d");
 let context2 = oscilloscopeCanvas2.getContext("2d");
 let context3 = oscilloscopeCanvas3.getContext("2d");
+let spectrumContext = spectrumCanvas.getContext("2d");
+
 let currentCanvas = null;
 
 let parameters = [
@@ -216,6 +219,90 @@ canvas.forEach((item) => {
   });
 });
 
+function displaySpectrumLabel(context) {
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  context.font = "16px Arial";
+  context.fillText("fc - fm", 130, 420);
+  context.fillText("fc", 295, 420);
+  context.fillText("fc + fm", 430, 420);
+  context.fillText(
+    "Vc",
+    295,
+    390 - 2 * parameters[currentCanvas - 1].carrierAmp
+  );
+  context.fillText(
+    "mVc/2",
+    130,
+    390 - parameters[currentCanvas - 1].messageAmp
+  );
+  context.fillText(
+    "mVc/2",
+    430,
+    390 - parameters[currentCanvas - 1].messageAmp
+  );
+  context.closePath();
+}
+
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
+const drawSpectrum = () => {
+  spectrumContext.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
+  displaySpectrumLabel(spectrumContext);
+  spectrumContext.beginPath();
+  spectrumContext.fillStyle = darkCyan;
+  canvas_arrow(spectrumContext, 10, 400, 580, 400);
+  canvas_arrow(spectrumContext, 11, 400, 10, 400);
+  if (
+    parameters[currentCanvas - 1].carrierAmp !== 0 &&
+    parseFloat(
+      parameters[currentCanvas - 1].messageAmp /
+        parameters[currentCanvas - 1].carrierAmp
+    ) !== 0
+  ) {
+    canvas_arrow(
+      spectrumContext,
+      150,
+      400,
+      150,
+      400 - parameters[currentCanvas - 1].messageAmp
+    );
+    canvas_arrow(
+      spectrumContext,
+      450,
+      400,
+      450,
+      400 - parameters[currentCanvas - 1].messageAmp
+    );
+  }
+  if (parameters[currentCanvas - 1].carrierAmp !== 0) {
+    canvas_arrow(
+      spectrumContext,
+      300,
+      400,
+      300,
+      400 - 2 * parameters[currentCanvas - 1].carrierAmp
+    );
+  }
+  spectrumContext.stroke();
+};
+
 graphRep.addEventListener("click", () => {
   tempRep = graphRep.innerHTML;
   graphRep.innerHTML = graphType;
@@ -228,9 +315,14 @@ graphRep.addEventListener("click", () => {
     oscilloscopeCanvas.classList.add("d-none");
   }
   heading.innerHTML = graphType;
+  drawSpectrum();
 });
 backButton.addEventListener("click", () => {
   selectWave.classList.remove("d-none");
   selectedWave.classList.add("d-none");
   currentCanvas = null;
+  graphRep.innerHTML = "Spectrum";
+  graphType = "Oscilloscope";
+  oscilloscopeCanvas.classList.remove("d-none");
+  spectrum.classList.add("d-none");
 });

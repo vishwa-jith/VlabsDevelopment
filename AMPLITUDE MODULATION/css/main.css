@@ -162,6 +162,7 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: inset -2px -2px 8px white, inset 2px 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-#oscilloscope-canvas {
+#oscilloscope-canvas,
+#spectrum-canvas {
   box-shadow: inset -2px -2px 8px white, inset 2px 2px 8px rgba(0, 0, 0, 0.5);
 }
