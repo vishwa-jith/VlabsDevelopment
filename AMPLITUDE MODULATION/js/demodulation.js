@@ -14,22 +14,19 @@ let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
 let backButton = document.querySelector("#backButton");
 let spectrumCanvas = document.querySelector("#spectrum-canvas");
 
+// Colors
 let darkCyan = "#00796b";
 let lightCyan = "#b2dfdb";
 let light = "#eee";
+
+// Initialization
 var amYPos1 = [],
   amYPos2 = [],
   amYPos3 = [],
   t = 0;
 let graphType = "Oscilloscope";
 const PI = Math.PI;
-let context1 = oscilloscopeCanvas1.getContext("2d");
-let context2 = oscilloscopeCanvas2.getContext("2d");
-let context3 = oscilloscopeCanvas3.getContext("2d");
-let spectrumContext = spectrumCanvas.getContext("2d");
-
 let currentCanvas = null;
-
 let parameters = [
   {
     amArr: amYPos1,
@@ -56,27 +53,14 @@ let parameters = [
     carrierFreq: 100,
   },
 ];
-const drawSignals = (
-  context,
-  t,
-  amYPos,
-  messageAmp,
-  messageFreq,
-  carrierAmp,
-  carrierFreq
-) => {
-  displaySignalLabel(context);
-  drawAmplitudeModulationSignal(
-    context,
-    t,
-    amYPos,
-    oscilloscopeCanvas1.height / 2,
-    messageAmp,
-    messageFreq,
-    carrierAmp,
-    carrierFreq
-  );
-};
+
+// Canvas Initialization
+let context1 = oscilloscopeCanvas1.getContext("2d");
+let context2 = oscilloscopeCanvas2.getContext("2d");
+let context3 = oscilloscopeCanvas3.getContext("2d");
+let spectrumContext = spectrumCanvas.getContext("2d");
+
+// displays signals label
 function displaySignalLabel(context) {
   context.beginPath();
   context.fillStyle = darkCyan;
@@ -84,6 +68,8 @@ function displaySignalLabel(context) {
   context.fillText("am(t)", 10, 20);
   context.closePath();
 }
+
+// draws amplitude modulation signal
 const drawAmplitudeModulationSignal = (
   context,
   t,
@@ -112,16 +98,30 @@ const drawAmplitudeModulationSignal = (
   }
 };
 
-const drawMessageSignal = (t) => {
-  drawSignal(
+// draws signals
+const drawSignals = (
+  context,
+  t,
+  amYPos,
+  messageAmp,
+  messageFreq,
+  carrierAmp,
+  carrierFreq
+) => {
+  displaySignalLabel(context);
+  drawAmplitudeModulationSignal(
+    context,
+    t,
+    amYPos,
+    oscilloscopeCanvas1.height / 2,
     messageAmp,
     messageFreq,
-    t,
-    messageYPos,
-    oscilloscopeCanvas.height / 3 / 2
+    carrierAmp,
+    carrierFreq
   );
 };
 
+// loop
 function loop() {
   context1.clearRect(
     0,
@@ -165,14 +165,13 @@ canvas.forEach((item) => {
     amplitudeMessage.value = parameters[currentCanvas - 1].messageAmp;
     frequencyMessage.value = parameters[currentCanvas - 1].messageFreq;
 
+    // Initialize
     let context = oscilloscopeCanvas.getContext("2d");
     var messageYPos = [],
       t = 0;
     const PI = Math.PI;
-    const drawSignals = (t) => {
-      displaySignalLabel();
-      drawMessageSignal(t);
-    };
+
+    // displays Signal Labels
     function displaySignalLabel() {
       context.beginPath();
       context.fillStyle = darkCyan;
@@ -180,16 +179,8 @@ canvas.forEach((item) => {
       context.fillText("m(t)", 10, 20);
       context.closePath();
     }
-    const drawMessageSignal = (t) => {
-      drawSignal(
-        parameters[currentCanvas - 1].messageAmp,
-        parameters[currentCanvas - 1].messageFreq,
-        t,
-        messageYPos,
-        oscilloscopeCanvas.height / 2
-      );
-    };
 
+    // draws signals
     const drawSignal = (amplitude, frequency, t, arr, yOffset) => {
       let y = amplitude * Math.cos(2 * PI * frequency * t);
       arr.unshift(y);
@@ -204,6 +195,25 @@ canvas.forEach((item) => {
         }
       }
     };
+
+    // draws message signals
+    const drawMessageSignal = (t) => {
+      drawSignal(
+        parameters[currentCanvas - 1].messageAmp,
+        parameters[currentCanvas - 1].messageFreq,
+        t,
+        messageYPos,
+        oscilloscopeCanvas.height / 2
+      );
+    };
+
+    // draws signals
+    const drawSignals = (t) => {
+      displaySignalLabel();
+      drawMessageSignal(t);
+    };
+
+    // loop
     function loop() {
       context.clearRect(
         0,
@@ -219,6 +229,7 @@ canvas.forEach((item) => {
   });
 });
 
+// displays spectrum Labels
 function displaySpectrumLabel(context) {
   context.beginPath();
   context.fillStyle = darkCyan;
@@ -244,6 +255,7 @@ function displaySpectrumLabel(context) {
   context.closePath();
 }
 
+// creates line with arrow heads
 function canvas_arrow(context, fromx, fromy, tox, toy) {
   var headlen = 10;
   var dx = tox - fromx;
@@ -262,6 +274,7 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
   );
 }
 
+// draws spectrum
 const drawSpectrum = () => {
   spectrumContext.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
   displaySpectrumLabel(spectrumContext);
@@ -317,6 +330,7 @@ graphRep.addEventListener("click", () => {
   heading.innerHTML = graphType;
   drawSpectrum();
 });
+
 backButton.addEventListener("click", () => {
   selectWave.classList.remove("d-none");
   selectedWave.classList.add("d-none");
