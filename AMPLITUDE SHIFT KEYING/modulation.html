@@ -44,43 +44,73 @@
           <div id="oscilloscope">
             <canvas id="oscilloscope-canvas" height="600" width="600"></canvas>
           </div>
-          <div id="spectrum" class="d-none">
-            <canvas id="spectrum-canvas" height="600" width="600"></canvas>
-          </div>
         </div>
         <br />
-        <div class="col-12 d-flex justify-content-between w-75">
-          <div
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
+        <div class="col-12 d-flex justify-content-center w-75">
+          <div class="btn-group" role="group" aria-label="Basic example">
             <button
-              class="btn btn-sm"
-              id="bin1"
-              style="background-color: #b2dfdb; color: #00796b"
-            >
-              Vm &gt; Vc
-            </button>
-          </div>
-          <div
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <button
-              class="btn btn-sm"
-              id="bin2"
+              type="button"
+              class="btn"
               style="background-color: #00796b; color: #b2dfdb"
+              id="bin1"
             >
-              Vm = Vc
+              0
             </button>
-          </div>
-          <div
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
             <button
-              class="btn btn-sm"
-              id="bin3"
-              style="background-color: #b2dfdb; color: #00796b"
+              type="button"
+              class="btn"
+              style="background-color: #00796b; color: #b2dfdb"
+              id="bin2"
             >
-              Vm &lt; Vc
+              0
+            </button>
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #00796b; color: #b2dfdb"
+              id="bin3"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #00796b; color: #b2dfdb"
+              id="bin4"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #00796b; color: #b2dfdb"
+              id="bin5"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #00796b; color: #b2dfdb"
+              id="bin6"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #00796b; color: #b2dfdb"
+              id="bin7"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #00796b; color: #b2dfdb"
+              id="bin8"
+            >
+              0
             </button>
           </div>
         </div>
@@ -138,7 +168,7 @@
               name="frequencyCarrier"
               type="number"
               disabled="true"
-              value="200"
+              value="100"
             />
             <div class="quantity-nav">
               <button
