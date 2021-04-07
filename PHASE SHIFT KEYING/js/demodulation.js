@@ -106,14 +106,16 @@ function FSKSignal(context, phase, carrierAmp, mapObj) {
         k,
         yPostOff -
           yPostOff / 2 -
-          carrierAmp * Math.sin(2 * Math.PI * f + phase),
+          carrierAmp * Math.sin(2 * Math.PI * f + phase + Math.PI),
         2,
         0,
         2 * Math.PI
       );
       context.fill();
       context.closePath();
-      f += 1 / 32;
+      if (carrierAmp) {
+        f += 1 / carrierAmp;
+      }
     } else {
       context.beginPath();
       context.arc(
@@ -127,7 +129,7 @@ function FSKSignal(context, phase, carrierAmp, mapObj) {
       );
       context.fill();
       context.closePath();
-      f += 1 / 50;
+      f += 1 / carrierAmp;
     }
   }
 }

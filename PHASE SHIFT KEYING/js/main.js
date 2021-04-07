@@ -98,8 +98,8 @@ function drawMessageSignal() {
   }
 }
 
-//FSK Signal
-function FSKSignal(phase) {
+//PSK Signal
+function PSKSignal(phase) {
   context.fillStyle = darkCyan;
   context.strokeStyle = lightCyan;
   context.moveTo(0, 3 * yPostOff - yPostOff / 2);
@@ -112,7 +112,7 @@ function FSKSignal(phase) {
         k,
         3 * yPostOff -
           yPostOff / 2 -
-          carrierAmp * Math.sin(2 * Math.PI * f + phase),
+          carrierAmp * Math.sin(2 * Math.PI * f + phase + Math.PI),
         2,
         0,
         2 * Math.PI
@@ -120,7 +120,7 @@ function FSKSignal(phase) {
       context.fill();
       context.closePath();
       if (carrierAmp) {
-        f += 1 / 32;
+        f += 1 / carrierAmp;
       }
     } else {
       context.beginPath();
@@ -135,7 +135,7 @@ function FSKSignal(phase) {
       );
       context.fill();
       context.closePath();
-      f += 1 / 50;
+      f += 1 / carrierAmp;
     }
   }
 }
@@ -145,7 +145,7 @@ function loop() {
   context.clearRect(0, 0, WIDTH, HEIGHT);
   drawMessageSignal();
   drawCarrierSignal(t);
-  FSKSignal(phaseDiff);
+  PSKSignal(phaseDiff);
   phaseDiff += 0.05;
   t += PI / 180 / 100;
   requestAnimationFrame(loop);
