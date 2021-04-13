@@ -86,6 +86,100 @@
           ></canvas>
           <br />
         </div>
+        <div class="col-3">
+          <h3 class="cyan-heading">Message Signal</h3>
+          <hr />
+          <div class="d-flex align-items-center justify-content-between">
+            <label
+              for="amplitudeMessage"
+              class="h5 m-0 font-weight-light text-secondary"
+              >Amplitude</label
+            >
+            <div class="quantity">
+              <input
+                id="amplitudeMessage"
+                name="amplitudeMessage"
+                type="number"
+                value="0"
+                disabled="true"
+                min="0"
+                max="50"
+              />
+              <div class="quantity-nav">
+                <button
+                  class="btn btn-sm quantity-button shadow-none quantity-up"
+                  id="amplitudeMessageUp"
+                >
+                  <i class="fa fa-caret-up fa-lg" aria-hidden="true"></i>
+                </button>
+                <button
+                  class="btn btn-sm quantity-button shadow-none quantity-down"
+                  id="amplitudeMessageDown"
+                >
+                  <i class="fa fa-caret-down fa-lg" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="d-flex align-items-center justify-content-between">
+            <label
+              for="frequencyMessage"
+              class="h5 m-0 font-weight-light text-secondary"
+              >Frequency</label
+            >
+            <div class="quantity">
+              <input
+                id="frequencyMessage"
+                name="frequencyMessage"
+                type="number"
+                disabled="true"
+                value="100"
+              />
+              <div class="quantity-nav">
+                <button
+                  class="btn btn-sm quantity-button shadow-none quantity-up"
+                >
+                  <i class="fa fa-caret-up fa-lg" aria-hidden="true"></i>
+                </button>
+                <button
+                  class="btn btn-sm quantity-button shadow-none quantity-down"
+                >
+                  <i class="fa fa-caret-down fa-lg" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="d-flex align-items-center justify-content-between">
+            <label
+              for="phaseMessage"
+              class="h5 m-0 font-weight-light text-secondary"
+              >Phase</label
+            >
+            <div class="quantity">
+              <input
+                id="phaseMessage"
+                name="phaseMessage"
+                type="number"
+                disabled="true"
+                value="10"
+              />
+              <div class="quantity-nav">
+                <button
+                  class="btn btn-sm quantity-button shadow-none quantity-up"
+                >
+                  <i class="fa fa-caret-up fa-lg" aria-hidden="true"></i>
+                </button>
+                <button
+                  class="btn btn-sm quantity-button shadow-none quantity-down"
+                >
+                  <i class="fa fa-caret-down fa-lg" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
