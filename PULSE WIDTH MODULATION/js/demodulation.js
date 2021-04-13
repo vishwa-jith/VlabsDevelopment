@@ -5,6 +5,7 @@ let canvas = document.querySelectorAll("canvas");
 let selectWave = document.querySelector("#selectWave");
 let selectedWave = document.querySelector("#selectedWave");
 let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
+let amplitudeMessage = document.querySelector("#amplitudeMessage");
 
 // Colors
 let darkCyan = "#00796b";
@@ -17,119 +18,121 @@ let context2 = oscilloscopeCanvas2.getContext("2d");
 let context3 = oscilloscopeCanvas3.getContext("2d");
 let context = oscilloscopeCanvas.getContext("2d");
 
-// Initialization
-var t = 0,
-  bitSize = 0,
+//Variables
+var WIDTH = 600,
+  HEIGHT = 600,
+  mapObj = new Map(),
   incrementStep = 1,
-  WIDTH = 600,
-  HEIGHT = 150,
-  phaseDiff = 0,
-  f = 0,
   yPostOff = 150,
-  bitIndex = 0,
-  mapObj = new Map();
+  f = 0,
+  c = 0,
+  t = 0,
+  tPAM = 0;
 
-let graphType = "Oscilloscope";
 const PI = Math.PI;
 let currentCanvas = null;
 
 let parameters = [
   {
     context: context1,
-    messageBits: [0, 0, 0, 1, 0, 0, 0, 1],
-    carrierAmp: 39,
-    carrierFreq: 100,
+    messageAmp: 39,
+    messageFreq: 100,
+    sawYPos: [],
+    messageYPos: [],
+    duty: 34,
   },
   {
     context: context2,
-    messageBits: [0, 1, 1, 0, 0, 0, 1, 1],
-    carrierAmp: 30,
-    carrierFreq: 100,
+    messageAmp: 30,
+    messageFreq: 100,
+    sawYPos: [],
+    messageYPos: [],
+    duty: 10,
   },
   {
     context: context3,
-    messageBits: [0, 0, 1, 0, 1, 1, 0, 0],
-    carrierAmp: 50,
-    carrierFreq: 100,
+    messageAmp: 50,
+    messageFreq: 100,
+    sawYPos: [],
+    messageYPos: [],
+    duty: 93,
   },
 ];
 
+// Plot Graph Points
+const drawSignal = (context, messageAmp, frequency, t, arr, duty, sawYPos) => {
+  let y = messageAmp * Math.cos(2 * PI * frequency * t);
+  arr.unshift(y);
+  var prev = 0;
+  for (let i = 0; i < arr.length; i++) {
+    let val = (duty * messageAmp * 2) / 100 - messageAmp;
+    val = -val;
+    if (prev < val && arr[i] >= val) {
+      sawYPos.unshift([i, 0]);
+    } else if (prev > val && arr[i] <= val) {
+      sawYPos.unshift([i, -messageAmp]);
+    }
+    context.beginPath();
+    context.fillStyle = darkCyan;
+    context.arc(i, yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
+    context.stroke();
+    context.fill();
+    context.closePath();
+    if (arr.length > WIDTH) {
+      arr.pop();
+    }
+    prev = arr[i];
+  }
+};
+
+// Plot PWM Graph Points
+const drawPWMSignal = (context, sawYPos) => {
+  context.fillStyle = darkCyan;
+  context.strokeStyle = darkCyan;
+  context.moveTo(0, yPostOff - yPostOff / 2);
+  context.lineTo(WIDTH, yPostOff - yPostOff / 2);
+  context.stroke();
+  for (let i = 1; i < sawYPos.length; i++) {
+    context.beginPath();
+    context.moveTo(sawYPos[i - 1][0], yPostOff - yPostOff / 2);
+    context.lineTo(
+      sawYPos[i - 1][0],
+      yPostOff - yPostOff / 2 + sawYPos[i - 1][1]
+    );
+    context.lineTo(sawYPos[i][0], yPostOff - yPostOff / 2 + sawYPos[i - 1][1]);
+    context.lineTo(sawYPos[i][0], yPostOff - yPostOff / 2);
+    context.stroke();
+    context.closePath();
+    if (sawYPos.length > WIDTH / 50) {
+      sawYPos.pop();
+    }
+  }
+};
+
+// Draws Message Signal
+const drawMessageSignal = (
+  context,
+  messageAmp,
+  messageFreq,
+  t,
+  messsageYPos,
+  duty,
+  sawYPos
+) => {
+  drawSignal(context, messageAmp, messageFreq, t, messsageYPos, duty, sawYPos);
+};
+
+initializeMapObj();
+
 //function to setup the mapObj
-function initializeMapObj(messageBits) {
+function initializeMapObj() {
   t = 0;
   bitIndex = 0;
-  bitSize = WIDTH / messageBits.length;
-  var mapObj = new Map();
   for (; t < WIDTH; t += incrementStep) {
-    if (t >= bitIndex * bitSize && t < (bitIndex + 1) * bitSize) {
-      mapObj.set(t, messageBits[bitIndex]);
+    if (t % 50 !== 0) {
+      mapObj.set(t, bitIndex);
     } else {
-      bitIndex++;
-    }
-  }
-  return mapObj;
-}
-
-//function to draw the message signal
-function drawMessageSignal(context, carrierAmp, mapObj) {
-  context.fillStyle = darkCyan;
-  context.strokeStyle = lightCyan;
-  context.moveTo(0, yPostOff - yPostOff / 2);
-  context.lineTo(WIDTH, yPostOff - yPostOff / 2);
-  context.stroke();
-  for (const k of mapObj.keys()) {
-    if (mapObj.get(k) == 0) {
-      context.beginPath();
-      context.arc(k, yPostOff - yPostOff / 2, 2, 0, 2 * Math.PI);
-      context.fill();
-      context.closePath();
-    } else {
-      context.beginPath();
-      context.arc(k, yPostOff - yPostOff / 2 - carrierAmp, 2, 0, 2 * Math.PI);
-      context.fill();
-      context.closePath();
-    }
-  }
-}
-
-//FSK Signal
-function FSKSignal(context, phase, carrierAmp, mapObj) {
-  context.fillStyle = darkCyan;
-  context.strokeStyle = lightCyan;
-  context.moveTo(0, yPostOff - yPostOff / 2);
-  context.lineTo(WIDTH, yPostOff - yPostOff / 2);
-  context.stroke();
-  for (const k of mapObj.keys()) {
-    if (mapObj.get(k) == 0) {
-      context.beginPath();
-      context.arc(
-        k,
-        yPostOff -
-          yPostOff / 2 -
-          carrierAmp * Math.sin(2 * Math.PI * f + phase + Math.PI),
-        2,
-        0,
-        2 * Math.PI
-      );
-      context.fill();
-      context.closePath();
-      if (carrierAmp) {
-        f += 1 / carrierAmp;
-      }
-    } else {
-      context.beginPath();
-      context.arc(
-        k,
-        yPostOff -
-          yPostOff / 2 -
-          carrierAmp * Math.sin(2 * Math.PI * f + phase),
-        2,
-        0,
-        2 * Math.PI
-      );
-      context.fill();
-      context.closePath();
-      f += 1 / carrierAmp;
+      bitIndex = bitIndex ? 0 : 1;
     }
   }
 }
@@ -138,18 +141,23 @@ function FSKSignal(context, phase, carrierAmp, mapObj) {
 function loop() {
   for (var i = 0; i < parameters.length; i++) {
     parameters[i].context.clearRect(0, 0, WIDTH, HEIGHT);
-
-    FSKSignal(
-      parameters[i].context,
-      phaseDiff,
-      parameters[i].carrierAmp,
-      initializeMapObj(parameters[i].messageBits)
+    drawMessageSignal(
+      context,
+      parameters[i].messageAmp,
+      parameters[i].messageFreq,
+      t,
+      parameters[i].messageYPos,
+      parameters[i].duty,
+      parameters[i].sawYPos
     );
+    drawPWMSignal(parameters[i].context, parameters[i].sawYPos);
   }
+  if (c % 50 == 0) {
+    tPAM += (PI / 180 / 200) * 50;
+  }
+  t += PI / 180 / 200;
+  c += 1;
 
-  //   drawMessageSignal();
-  phaseDiff += 0.05;
-  t += PI / 180 / 100;
   requestAnimationFrame(loop);
 }
 loop();
@@ -160,17 +168,24 @@ canvas.forEach((item) => {
     selectWave.classList.add("d-none");
     selectedWave.classList.remove("d-none");
 
+    var t = 0,
+      messageYPos = [],
+      sawYPos = [];
+
     // loop
     function loop() {
       context.clearRect(0, 0, WIDTH, HEIGHT);
       drawMessageSignal(
         context,
-        parameters[currentCanvas - 1].carrierAmp,
-        initializeMapObj(parameters[currentCanvas - 1].messageBits)
+        parameters[currentCanvas - 1].messageAmp,
+        parameters[currentCanvas - 1].messageFreq,
+        t,
+        messageYPos,
+        parameters[currentCanvas - 1].duty,
+        sawYPos
       );
-
-      t += PI / 180 / 100;
-      phaseDiff += 0.05;
+      amplitudeMessage.value = parameters[currentCanvas - 1].messageAmp;
+      t += PI / 180 / 200;
       requestAnimationFrame(loop);
     }
     loop();

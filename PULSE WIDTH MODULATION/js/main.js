@@ -1,14 +1,14 @@
-let amplitudeCarrier = document.querySelector("#amplitudeCarrier");
-let amplitudeCarrierUp = document.querySelector("#amplitudeCarrierUp");
-let amplitudeCarrierDown = document.querySelector("#amplitudeCarrierDown");
-let carrierSlider = document.querySelector("#carrier-slider");
+let amplitudeMessage = document.querySelector("#amplitudeMessage");
+let amplitudeMessageUp = document.querySelector("#amplitudeMessageUp");
+let amplitudeMessageDown = document.querySelector("#amplitudeMessageDown");
+let messageSlider = document.querySelector("#message-slider");
 let dutyCycle = document.querySelector("#dutyCycle");
 let dutyCycleSlider = document.querySelector("#dutyCycle-slider");
 let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
 
 // Initialization
-let carrierAmp = 0;
-let carrierFreq = 100;
+let messageAmp = 0;
+let messageFreq = 100;
 
 // Colors
 let darkCyan = "#00796b";
@@ -21,19 +21,15 @@ const PI = Math.PI;
 let context = oscilloscopeCanvas.getContext("2d");
 
 //Variables
-var messageBits = [0, 0, 0, 0, 0, 0, 0, 0],
-  WIDTH = 600,
+var WIDTH = 600,
   HEIGHT = 600,
-  bitSize = WIDTH / messageBits.length,
   bitIndex = 0,
   mapObj = new Map(),
   incrementStep = 1,
   yPostOff = HEIGHT / 3,
-  f = 0,
-  phaseDiff = 0,
   carrierYPos = [],
-  pamYPos = [],
   sawYPos = [],
+  f = 0,
   c = 0,
   t = 0,
   tPAM = 0,
@@ -45,12 +41,12 @@ const drawSignal = (amplitude, frequency, t, arr) => {
   arr.unshift(y);
   var prev = 0;
   for (let i = 0; i < arr.length; i++) {
-    let val = (duty * carrierAmp * 2) / 100 - carrierAmp;
+    let val = (duty * messageAmp * 2) / 100 - messageAmp;
     val = -val;
     if (prev < val && arr[i] >= val) {
       sawYPos.unshift([i, 0]);
     } else if (prev > val && arr[i] <= val) {
-      sawYPos.unshift([i, -carrierAmp]);
+      sawYPos.unshift([i, -messageAmp]);
     }
     context.beginPath();
     context.fillStyle = darkCyan;
@@ -94,7 +90,7 @@ const drawPWM = () => {
 
 // Draws Carrier Signal
 const drawCarrierSignal = (t) => {
-  drawSignal(carrierAmp, carrierFreq, t, carrierYPos);
+  drawSignal(messageAmp, messageFreq, t, carrierYPos);
 };
 
 initializeMapObj();
@@ -152,10 +148,10 @@ function loop() {
 loop();
 
 // Handles change in Carrier Amplitude
-const handleAmplitudeCarrier = (event) => {
-  carrierAmp = parseInt(event.target.value);
-  amplitudeCarrier.value = carrierAmp;
-  carrierSlider.value = carrierAmp;
+const handleAmplitudeMessage = (event) => {
+  messageAmp = parseInt(event.target.value);
+  amplitudeMessage.value = messageAmp;
+  messageSlider.value = messageAmp;
 };
 
 // Handles change in Duty Cycle
@@ -166,22 +162,22 @@ const handleDutyCycle = (event) => {
 };
 
 // Listener for increasing Carrrier Amplitude
-amplitudeCarrierUp.addEventListener("click", () => {
-  if (carrierAmp < 50) {
-    carrierAmp += 1;
-    amplitudeCarrier.value = carrierAmp;
-    carrierSlider.value = carrierAmp;
+amplitudeMessageUp.addEventListener("click", () => {
+  if (messageAmp < 50) {
+    messageAmp += 1;
+    amplitudeMessage.value = messageAmp;
+    messageSlider.value = messageAmp;
   }
 });
 
 // Listener for decreasing Carrrier Amplitude
-amplitudeCarrierDown.addEventListener("click", () => {
-  if (carrierAmp > 0) {
-    carrierAmp -= 1;
-    amplitudeCarrier.value = carrierAmp;
-    carrierSlider.value = carrierAmp;
+amplitudeMessageDown.addEventListener("click", () => {
+  if (messageAmp > 0) {
+    messageAmp -= 1;
+    amplitudeMessage.value = messageAmp;
+    messageSlider.value = messageAmp;
   }
 });
 
-carrierSlider.addEventListener("change", handleAmplitudeCarrier);
+messageSlider.addEventListener("change", handleAmplitudeMessage);
 dutyCycleSlider.addEventListener("change", handleDutyCycle);
