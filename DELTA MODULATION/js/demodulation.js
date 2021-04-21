@@ -23,11 +23,12 @@ var WIDTH = 600,
   HEIGHT = 600,
   mapObj = new Map(),
   incrementStep = 1,
-  yPostOff = 150,
+  yPostOff = 100,
   f = 0,
   c = 0,
   t = 0,
-  tPAM = 0;
+  tDelta = 0,
+  qLevel = 15;
 
 const PI = Math.PI;
 let currentCanvas = null;
@@ -38,21 +39,21 @@ let parameters = [
     messageAmp: 39,
     messageFreq: 100,
     messsageYPos: [],
-    pamYPos: [],
+    deltaYPos: [],
   },
   {
     context: context2,
     messageAmp: 30,
     messageFreq: 100,
     messsageYPos: [],
-    pamYPos: [],
+    deltaYPos: [],
   },
   {
     context: context3,
     messageAmp: 50,
     messageFreq: 100,
     messsageYPos: [],
-    pamYPos: [],
+    deltaYPos: [],
   },
 ];
 
@@ -63,7 +64,7 @@ const drawSignal = (context, amplitude, frequency, t, arr) => {
   for (let i = 0; i < arr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
-    context.arc(i, yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
+    context.arc(i, 150 - 150 / 2 - arr[i], 2, 0, 2 * PI);
     context.stroke();
     context.fill();
     context.closePath();
@@ -73,19 +74,29 @@ const drawSignal = (context, amplitude, frequency, t, arr) => {
   }
 };
 
-// Plot PAM Graph Points
-const drawPAMSignal = (context, amplitude, frequency, t, arr) => {
+const drawBinaryMessage = (context, i, bin) => {
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  context.font = "15px Arial";
+  context.fillText(bin, i, yPostOff - yPostOff / 2);
+  context.closePath();
+};
+
+// Plot DELTA Graph Points
+const drawDELTASignal = (context, amplitude, frequency, t, arr) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
   arr.unshift(y);
+  let prev = -amplitude;
   for (let i = 0; i < arr.length; i++) {
-    context.beginPath();
-    context.fillStyle = darkCyan;
-    context.strokeStyle = darkCyan;
-    context.arc(i, yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
-    context.lineTo(i, yPostOff - yPostOff / 2);
-    context.stroke();
-    context.fill();
-    context.closePath();
+    if (i % qLevel == 0) {
+      if (arr[i] > prev) {
+        prev += qLevel;
+        drawBinaryMessage(context, i, 1);
+      } else {
+        prev -= qLevel;
+        drawBinaryMessage(context, i, 0);
+      }
+    }
     if (arr.length > WIDTH) {
       arr.pop();
     }
@@ -122,16 +133,18 @@ function initializeMapObj() {
 function loop() {
   for (var i = 0; i < parameters.length; i++) {
     parameters[i].context.clearRect(0, 0, WIDTH, HEIGHT);
-    drawPAMSignal(
+    parameters[i].context.fillStyle = darkCyan;
+    parameters[i].context.strokeStyle = light;
+    drawDELTASignal(
       parameters[i].context,
       parameters[i].messageAmp,
       parameters[i].messageFreq,
-      tPAM,
-      parameters[i].pamYPos
+      tDelta,
+      parameters[i].deltaYPos
     );
   }
   if (c % 15 == 0) {
-    tPAM += (PI / 180 / 200) * 15;
+    tDelta += (PI / 180 / 200) * 15;
   }
   t += PI / 180 / 200;
   c += 1;
