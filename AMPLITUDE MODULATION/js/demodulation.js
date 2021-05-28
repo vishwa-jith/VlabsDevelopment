@@ -19,6 +19,12 @@ let darkCyan = "#00796b";
 let lightCyan = "#b2dfdb";
 let light = "#eee";
 
+// Canvas Initialization
+let context1 = oscilloscopeCanvas1.getContext("2d");
+let context2 = oscilloscopeCanvas2.getContext("2d");
+let context3 = oscilloscopeCanvas3.getContext("2d");
+let spectrumContext = spectrumCanvas.getContext("2d");
+
 // Initialization
 var amYPos1 = [],
   amYPos2 = [],
@@ -54,18 +60,29 @@ let parameters = [
   },
 ];
 
-// Canvas Initialization
-let context1 = oscilloscopeCanvas1.getContext("2d");
-let context2 = oscilloscopeCanvas2.getContext("2d");
-let context3 = oscilloscopeCanvas3.getContext("2d");
-let spectrumContext = spectrumCanvas.getContext("2d");
-
 // displays signals label
 function displaySignalLabel(context) {
   context.beginPath();
   context.fillStyle = darkCyan;
   context.font = "16px Arial";
   context.fillText("am(t)", 10, 20);
+  context.fillText(
+    "time(t)",
+    oscilloscopeCanvas.width - 80,
+    oscilloscopeCanvas.height / 2 - 10
+  );
+
+  context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
   context.closePath();
 }
 

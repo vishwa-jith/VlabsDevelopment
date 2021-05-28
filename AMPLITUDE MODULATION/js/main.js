@@ -106,6 +106,54 @@ const displaySignalLabel = () => {
   context.fillText("m(t)", 10, 20);
   context.fillText("c(t)", 10, oscilloscopeCanvas.height / 3 + 20);
   context.fillText("am(t)", 10, (2 * oscilloscopeCanvas.height) / 3 + 20);
+  context.fillText(
+    "time(t)",
+    oscilloscopeCanvas.width - 80,
+    oscilloscopeCanvas.height / 6 - 10
+  );
+  context.fillText(
+    "time(t)",
+    oscilloscopeCanvas.width - 80,
+    oscilloscopeCanvas.height / 2 - 10
+  );
+  context.fillText(
+    "time(t)",
+    oscilloscopeCanvas.width - 80,
+    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6 - 10
+  );
+  context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 6,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 6
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6
+  );
+  context.stroke();
   context.closePath();
 };
 
