@@ -77,6 +77,15 @@ function drawMessageSignal(context, carrierAmp, mapObj) {
   context.moveTo(0, yPostOff - yPostOff / 2);
   context.lineTo(WIDTH, yPostOff - yPostOff / 2);
   context.stroke();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(context, 0, 50, 600, 50);
+  context.stroke();
+  context.font = "16px Arial";
+  context.fillText("1", 10, 30);
+  context.fillText("0", 10, 70);
+  context.fillText("binary", 550, 65);
+  context.closePath();
   for (const k of mapObj.keys()) {
     if (mapObj.get(k) == 0) {
       context.beginPath();
@@ -92,6 +101,24 @@ function drawMessageSignal(context, carrierAmp, mapObj) {
   }
 }
 
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
 //FSK Signal
 function FSKSignal(context, phase, carrierAmp, mapObj) {
   context.fillStyle = darkCyan;
@@ -99,6 +126,14 @@ function FSKSignal(context, phase, carrierAmp, mapObj) {
   context.moveTo(0, yPostOff - yPostOff / 2);
   context.lineTo(WIDTH, yPostOff - yPostOff / 2);
   context.stroke();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(context, 0, 50, 600, 50);
+  context.stroke();
+  context.font = "16px Arial";
+  context.fillText("psk(t)", 10, 20);
+  context.fillText("time(t)", 550, 65);
+  context.closePath();
   for (const k of mapObj.keys()) {
     if (mapObj.get(k) == 0) {
       context.beginPath();

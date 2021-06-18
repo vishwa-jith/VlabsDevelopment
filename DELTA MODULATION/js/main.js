@@ -3,6 +3,7 @@ let amplitudeMessageUp = document.querySelector("#amplitudeMessageUp");
 let amplitudeMessageDown = document.querySelector("#amplitudeMessageDown");
 let messageSlider = document.querySelector("#message-slider");
 let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
+let toggle = document.querySelector("#toggle");
 
 // Initialization
 let messageAmp = 0;
@@ -12,6 +13,7 @@ let messageFreq = 100;
 let darkCyan = "#00796b";
 let lightCyan = "#b2dfdb";
 let light = "#eee";
+let status = false;
 
 const PI = Math.PI;
 
@@ -36,19 +38,48 @@ var WIDTH = 600,
 // Plot Graph Points
 const drawSignal = (amplitude, frequency, t, arr) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  arr.unshift(y);
+  if (status) {
+    arr.unshift(y);
+  }
   for (let i = 0; i < arr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
     context.stroke();
     context.fill();
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(arr[i])})`,
+        i + 5,
+        yPostOff - yPostOff / 2 - arr[i] - 5
+      );
+      context.arc(i, yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
+    }
     context.closePath();
     if (arr.length > WIDTH) {
       arr.pop();
     }
   }
 };
+
+// Draws Line with Arrow Heads
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
 
 const drawBinaryMessage = (i, bin) => {
   context.beginPath();
@@ -61,7 +92,9 @@ const drawBinaryMessage = (i, bin) => {
 // Plot DELTA Graph Points
 const drawDELTASignal = (amplitude, frequency, t, arr) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  arr.unshift(y);
+  if (status) {
+    arr.unshift(y);
+  }
   let prev = -amplitude;
   for (let i = 0; i < arr.length; i++) {
     if (i % qLevel == 0) {
@@ -116,13 +149,49 @@ function loop() {
   context.strokeStyle = lightCyan;
   drawMessageSignal(t);
   drawDELTASignal(messageAmp, messageFreq, tDELTA, YPos);
-  console.log(binaryArr);
   if (c % qLevel == 0) {
     tDELTA += (PI / 180 / 200) * qLevel;
   }
   t += PI / 180 / 200;
   c += 1;
-
+  context.font = "16px Arial";
+  context.fillText("m(t)", 10, 20);
+  context.fillText("dm(t)", 10, yPostOff);
+  context.fillText("time(t)", 550, 75);
+  context.fillText("time(t)", 550, yPostOff + 75);
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 6,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 6
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6
+  );
+  context.stroke();
+  context.closePath();
   requestAnimationFrame(loop);
 }
 loop();
@@ -153,3 +222,12 @@ amplitudeMessageDown.addEventListener("click", () => {
 });
 
 messageSlider.addEventListener("change", handleAmplitudeMessage);
+
+toggle.addEventListener("click", () => {
+  status = !status;
+  if (status) {
+    toggle.innerHTML = "Pause";
+  } else {
+    toggle.innerHTML = "Play";
+  }
+});

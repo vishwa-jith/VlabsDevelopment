@@ -48,6 +48,14 @@ const drawSignal = (amplitude, frequency, t, arr) => {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, 2 * yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(arr[i])})`,
+        i + 5,
+        2 * yPostOff - yPostOff / 2 - arr[i] - 5
+      );
+      context.arc(i, 2 * yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
+    }
     context.fill();
     context.closePath();
     if (arr.length > WIDTH) {
@@ -105,6 +113,7 @@ function ASKSignal(phase) {
   context.moveTo(0, 3 * yPostOff - yPostOff / 2);
   context.lineTo(WIDTH, 3 * yPostOff - yPostOff / 2);
   context.stroke();
+  let prev = 0;
   for (const k of mapObj.keys()) {
     if (mapObj.get(k) == 0) {
       context.beginPath();
@@ -127,8 +136,29 @@ function ASKSignal(phase) {
       context.closePath();
       f += 1 / carrierAmp;
     }
+    prev = k;
   }
 }
+
+// Draws Line with Arrow Heads
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
 // Loop Animation
 function loop() {
   context.clearRect(0, 0, WIDTH, HEIGHT);
@@ -138,6 +168,43 @@ function loop() {
   phaseDiff += 0.05;
   t += PI / 180 / 100;
   requestAnimationFrame(loop);
+  context.font = "16px Arial";
+  context.fillText("b(t)", 10, 20);
+  context.fillText("c(t)", 10, oscilloscopeCanvas.height / 3 + 20);
+  context.fillText("ask(t)", 10, (2 * oscilloscopeCanvas.height) / 3 + 20);
+  context.fillText("time(t)", 550, oscilloscopeCanvas.height / 3 + 75);
+  context.fillText("1", 10, 50);
+  context.fillText("0", 10, 90);
+  context.fillText("1", 10, (2 * oscilloscopeCanvas.height) / 3 + 50);
+  context.fillText("0", 10, (2 * oscilloscopeCanvas.height) / 3 + 90);
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 6 - carrierAmp,
+    600,
+    oscilloscopeCanvas.height / 6 - carrierAmp
+  );
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2 - carrierAmp,
+    600,
+    oscilloscopeCanvas.height / 2 - carrierAmp
+  );
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2 + carrierAmp,
+    600,
+    oscilloscopeCanvas.height / 2 + carrierAmp
+  );
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    600,
+    oscilloscopeCanvas.height / 2
+  );
 }
 loop();
 

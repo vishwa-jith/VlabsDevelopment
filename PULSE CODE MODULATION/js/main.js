@@ -33,6 +33,55 @@ var WIDTH = 600,
   levelHeight = 0.25,
   samplingInterval = 15,
   binaryArr = [];
+
+// Displays Signal Labels
+const displaySignalLabel = () => {
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  context.font = "16px Arial";
+  context.fillText("m(t)", 10, 20);
+  context.fillText("s(t)", 10, 2 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("time(t)", 550, yPostOff / 2 - 20);
+  context.fillText("time(t)", 550, 2 * yPostOff - yPostOff / 2 - 20);
+  context.fillText("sampled", 530, 2 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("q(t)", 10, 3 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("time(t)", 550, 3 * yPostOff - yPostOff / 2 - 20);
+  context.fillText("quantized", 520, 3 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("Binary", 540, 4 * yPostOff - yPostOff / 2 - 75);
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    yPostOff / 2,
+    oscilloscopeCanvas.width,
+    yPostOff / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    2 * yPostOff - yPostOff / 2,
+    oscilloscopeCanvas.width,
+    2 * yPostOff - yPostOff / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    3 * yPostOff - yPostOff / 2,
+    oscilloscopeCanvas.width,
+    3 * yPostOff - yPostOff / 2
+  );
+};
+
 // Plot Graph Points
 const drawSignal = (amplitude, frequency, t, arr) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
@@ -41,6 +90,14 @@ const drawSignal = (amplitude, frequency, t, arr) => {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(arr[i])})`,
+        i + 5,
+        yPostOff - yPostOff / 2 - arr[i] - 5
+      );
+      context.arc(i, 2 * yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
+    }
     context.stroke();
     context.fill();
     context.closePath();
@@ -168,6 +225,25 @@ function initializeMapObj() {
   }
 }
 
+// Draws Line with Arrow Heads
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
 // Loop Animation
 function loop() {
   context.fillStyle = darkCyan;
@@ -175,6 +251,7 @@ function loop() {
   context.clearRect(0, 0, WIDTH, HEIGHT);
   drawMessageSignal(t);
   drawSampleSignal(messageAmp, messageFreq, tSampling, samYPos, c);
+  displaySignalLabel();
   if (c % samplingInterval == 0) {
     tSampling += (PI / 180 / 400) * samplingInterval;
   }

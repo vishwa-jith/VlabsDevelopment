@@ -70,6 +70,24 @@ function initializeMapObj(messageBits) {
   return mapObj;
 }
 
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
 //function to draw the message signal
 function drawMessageSignal(context, carrierAmp, mapObj) {
   context.fillStyle = darkCyan;
@@ -77,6 +95,20 @@ function drawMessageSignal(context, carrierAmp, mapObj) {
   context.moveTo(0, yPostOff - yPostOff / 2);
   context.lineTo(WIDTH, yPostOff - yPostOff / 2);
   context.stroke();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.font = "16px Arial";
+  context.fillText("1", 10, 50);
+  context.fillText("0", 10, 75);
   for (const k of mapObj.keys()) {
     if (mapObj.get(k) == 0) {
       context.beginPath();
@@ -99,6 +131,20 @@ function ASKSignal(context, phase, carrierAmp, mapObj) {
   context.moveTo(0, yPostOff - yPostOff / 2);
   context.lineTo(WIDTH, yPostOff - yPostOff / 2);
   context.stroke();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
+  context.font = "16px Arial";
+  context.fillText("ask(t)", 10, 20);
+  context.fillText("time(t)", 550, 65);
+  context.closePath();
   for (const k of mapObj.keys()) {
     if (mapObj.get(k) == 0) {
       context.beginPath();

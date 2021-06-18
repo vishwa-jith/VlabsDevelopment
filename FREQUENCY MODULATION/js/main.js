@@ -14,6 +14,7 @@ let power = document.querySelector("#power");
 let carrierSlider = document.querySelector("#carrier-slider");
 let messageSlider = document.querySelector("#message-slider");
 let spectrumCanvas = document.querySelector("#spectrum-canvas");
+let toggle = document.querySelector("#toggle");
 
 // Initialization
 let carrierAmp = 30;
@@ -21,6 +22,7 @@ let messageAmp = 30;
 let messageFreq = 0;
 let carrierFreq = 100;
 let graphType = "Oscilloscope";
+let status = false;
 
 // Colors
 let darkCyan = "#00796b";
@@ -37,32 +39,6 @@ var messageYPos = [],
   t = 0;
 const PI = Math.PI,
   beta = 5;
-
-// Determines Type of Modulation
-// const findModulation = () => {
-//   if (carrierAmp < messageAmp) {
-//     overModulation.style["background-color"] = darkCyan;
-//     overModulation.style["color"] = lightCyan;
-//     modulation.style["background-color"] = lightCyan;
-//     modulation.style["color"] = darkCyan;
-//     underModulation.style["background-color"] = lightCyan;
-//     underModulation.style["color"] = darkCyan;
-//   } else if (carrierAmp > messageAmp) {
-//     overModulation.style["background-color"] = lightCyan;
-//     overModulation.style["color"] = darkCyan;
-//     modulation.style["background-color"] = lightCyan;
-//     modulation.style["color"] = darkCyan;
-//     underModulation.style["background-color"] = darkCyan;
-//     underModulation.style["color"] = lightCyan;
-//   } else {
-//     overModulation.style["background-color"] = lightCyan;
-//     overModulation.style["color"] = darkCyan;
-//     modulation.style["background-color"] = darkCyan;
-//     modulation.style["color"] = lightCyan;
-//     underModulation.style["background-color"] = lightCyan;
-//     underModulation.style["color"] = darkCyan;
-//   }
-// };
 
 // Calculate Modulation Index
 const calculateModulationIndex = () => {
@@ -105,6 +81,39 @@ const displaySignalLabel = () => {
   context.fillText("c(t)", 10, oscilloscopeCanvas.height / 3 + 20);
   context.fillText("fm(t)", 10, (2 * oscilloscopeCanvas.height) / 3 + 20);
   context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 6,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 6
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6
+  );
+  context.stroke();
+  context.closePath();
 };
 
 // Displays Spectrum Labels
@@ -143,11 +152,21 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
 // Plot Graph Points
 const drawSignal = (amplitude, frequency, t, arr, yOffset) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  arr.unshift(y);
+  if (status) {
+    arr.unshift(y);
+  }
   for (let i = 0; i < arr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yOffset - arr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(arr[i])})`,
+        i + 5,
+        yOffset - arr[i] - 5
+      );
+      context.arc(i, yOffset - arr[i], 5, 0, 2 * PI);
+    }
     context.fill();
     context.closePath();
     if (arr.length > oscilloscopeCanvas.width) {
@@ -182,12 +201,21 @@ const drawCarrierSignal = (t) => {
 const drawFrequencyModulationSignal = (t, amArr, yOffset) => {
   let tempMessageValue = beta * Math.sin(2 * PI * messageFreq * t);
   let y = carrierAmp * Math.cos(2 * PI * carrierFreq * t + tempMessageValue);
-
-  amArr.unshift(y);
+  if (status) {
+    amArr.unshift(y);
+  }
   for (let i = 0; i < amArr.length; i++) {
-    context.beginPath();
+    context.beginPath(); 
     context.fillStyle = darkCyan;
     context.arc(i, yOffset - amArr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(amArr[i])})`,
+        i + 5,
+        yOffset - amArr[i] - 5
+      );
+      context.arc(i, yOffset - amArr[i], 5, 0, 2 * PI);
+    }
     context.fill();
     context.closePath();
     if (amArr.length > oscilloscopeCanvas.width) {
@@ -315,4 +343,13 @@ graphRep.addEventListener("click", () => {
   }
   heading.innerHTML = graphType;
   drawSpectrum();
+});
+
+toggle.addEventListener("click", () => {
+  status = !status;
+  if (status) {
+    toggle.innerHTML = "Pause";
+  } else {
+    toggle.innerHTML = "Play";
+  }
 });

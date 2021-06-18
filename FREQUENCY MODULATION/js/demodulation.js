@@ -85,7 +85,20 @@ function displaySignalLabel(context) {
   context.fillStyle = darkCyan;
   context.font = "16px Arial";
   context.fillText("am(t)", 10, 20);
+  context.fillText("am(t)", 550, 65);
   context.closePath();
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
 }
 
 const drawAmplitudeModulationSignal = (
@@ -106,6 +119,14 @@ const drawAmplitudeModulationSignal = (
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yOffset - amArr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(amArr[i])})`,
+        i + 5,
+        yOffset - amArr[i] - 5
+      );
+      context.arc(i, yOffset - amArr[i], 5, 0, 2 * PI);
+    }
     context.fill();
     context.closePath();
     if (amArr.length > oscilloscopeCanvas1.width) {
@@ -194,11 +215,32 @@ canvas.forEach((item) => {
 
     const drawSignal = (amplitude, frequency, t, arr, yOffset) => {
       let y = amplitude * Math.cos(2 * PI * frequency * t);
+      context.fillText("time(t)", 550, 65);
       arr.unshift(y);
+      context.beginPath(); 
+      context.fillStyle = darkCyan;
+      canvas_arrow(
+        context,
+        0,
+        oscilloscopeCanvas.height / 2,
+        oscilloscopeCanvas.width,
+        oscilloscopeCanvas.height / 2
+      );
+      context.stroke();
+      context.closePath();
+      context.beginPath();
       for (let i = 0; i < arr.length; i++) {
         context.beginPath();
         context.fillStyle = darkCyan;
         context.arc(i, yOffset - arr[i], 2, 0, 2 * PI);
+        if (i % 250 == 0) {
+          context.fillText(
+            `(${i}, ${parseInt(arr[i])})`,
+            i + 5,
+            yOffset - arr[i] - 5
+          );
+          context.arc(i, yOffset - arr[i], 5, 0, 2 * PI);
+        }
         context.fill();
         context.closePath();
         if (arr.length > oscilloscopeCanvas.width) {

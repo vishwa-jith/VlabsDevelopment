@@ -24,22 +24,28 @@
     <title>MODULATION - Amplitude</title>
   </head>
   <body style="overflow-x: hidden">
-    <div class="row mt-3">
-      <div class="col-8 d-flex justify-content-around align-items-center">
-        <button class="btn" id="backButton" onclick="location.href='/';">
-          <i
-            class="fa fa-arrow-left"
-            style="color: #00796b; font-size: 25px"
-            aria-hidden="true"
-          ></i>
-        </button>
-        <h1 class="text-center cyan-heading" id="heading">Oscilloscope</h1>
-      </div>
-    </div>
-    <div class="row mb-4">
+    <div class="row mb-2">
       <div
-        class="col-8 d-flex flex-column justify-content-center align-items-center"
+        class="
+          col-8
+          d-flex
+          flex-column
+          justify-content-center
+          align-items-center
+        "
       >
+        <div class="row mt-1">
+          <div class="col-12 d-flex justify-content-around align-items-center">
+            <button class="btn" id="backButton" onclick="location.href='/';">
+              <i
+                class="fa fa-arrow-left"
+                style="color: #00796b; font-size: 25px"
+                aria-hidden="true"
+              ></i>
+            </button>
+            <h2 class="text-center cyan-heading" id="heading">Oscilloscope</h2>
+          </div>
+        </div>
         <div class="wave-container">
           <div id="oscilloscope">
             <canvas id="oscilloscope-canvas" height="600" width="600"></canvas>
@@ -49,9 +55,8 @@
           </div>
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-3 mt-2">
         <h3 class="cyan-heading">Carrier Signal</h3>
-        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="amplitudeCarrier"
@@ -65,8 +70,8 @@
               type="number"
               value="30"
               min="0"
-              max="50"
               disabled="true"
+              max="50"
             />
             <div class="quantity-nav">
               <button
@@ -84,7 +89,6 @@
             </div>
           </div>
         </div>
-        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label for="frequencyCarrier" class="h5 m-0 font-weight-light"
             >Frequency</label
@@ -94,9 +98,9 @@
               id="frequencyCarrier"
               name="frequencyCarrier"
               type="number"
-              value="100"
-              min="100"
-              max="200"
+              value="0"
+              min="0"
+              max="50"
             />
             <div class="quantity-nav">
               <button
@@ -118,11 +122,10 @@
           type="range"
           id="carrier-slider"
           class="range-style"
-          value="100"
-          min="100"
-          max="200"
+          value="0"
+          min="0"
+          max="50"
         />
-        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="phaseCarrier"
@@ -151,9 +154,8 @@
             </div>
           </div>
         </div>
-        <br />
-        <h3 class="cyan-heading">Message Signal</h3>
         <hr />
+        <h3 class="cyan-heading">Message Signal</h3>
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="amplitudeMessage"
@@ -166,9 +168,9 @@
               name="amplitudeMessage"
               type="number"
               value="30"
+              disabled="true"
               min="0"
               max="50"
-              disabled="true"
             />
             <div class="quantity-nav">
               <button
@@ -186,7 +188,6 @@
             </div>
           </div>
         </div>
-        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label for="frequencyMessage" class="h5 m-0 font-weight-light"
             >Frequency</label
@@ -196,9 +197,7 @@
               id="frequencyMessage"
               name="frequencyMessage"
               type="number"
-              value="0"
-              min="0"
-              max="50"
+              value="20"
             />
             <div class="quantity-nav">
               <button
@@ -224,7 +223,6 @@
           min="0"
           max="50"
         />
-        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <label
             for="phaseMessage"
@@ -253,8 +251,7 @@
             </div>
           </div>
         </div>
-        <br />
-        <br />
+        <hr />
         <div class="d-flex align-items-center justify-content-between">
           <h3 class="cyan-heading">Modulation Index</h3>
           <div class="quantity">
@@ -280,13 +277,19 @@
             />
           </div>
         </div>
-        <br />
         <button
           class="btn btn-lg"
           id="graphRep"
           style="background-color: #00796b; color: #fff"
         >
           Spectrum
+        </button>
+        <button
+          class="btn btn-lg"
+          id="toggle"
+          style="background-color: #00796b; color: #fff"
+        >
+          Play
         </button>
       </div>
     </div>

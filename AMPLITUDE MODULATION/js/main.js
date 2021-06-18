@@ -17,6 +17,7 @@ let power = document.querySelector("#power");
 let carrierSlider = document.querySelector("#carrier-slider");
 let messageSlider = document.querySelector("#message-slider");
 let spectrumCanvas = document.querySelector("#spectrum-canvas");
+let toggle = document.querySelector("#toggle");
 
 // Initialization
 let carrierAmp = 0;
@@ -24,6 +25,7 @@ let messageAmp = 0;
 let messageFreq = 20;
 let carrierFreq = 100;
 let graphType = "Oscilloscope";
+let status = false;
 
 // Colors
 let darkCyan = "#00796b";
@@ -193,11 +195,21 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
 // Plot Graph Points
 const drawSignal = (amplitude, frequency, t, arr, yOffset) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  arr.unshift(y);
+  if (status) {
+    arr.unshift(y);
+  }
   for (let i = 0; i < arr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yOffset - arr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(arr[i])})`,
+        i + 5,
+        yOffset - arr[i] - 5
+      );
+      context.arc(i, yOffset - arr[i], 5, 0, 2 * PI);
+    }
     context.fill();
     context.closePath();
     if (arr.length > oscilloscopeCanvas.width) {
@@ -234,12 +246,21 @@ const drawAmplitudeModulationSignal = (t, amArr, yOffset) => {
   let y =
     (parseInt(carrierAmp) + tempMessageValue) *
     Math.cos(2 * PI * carrierFreq * t);
-
-  amArr.unshift(y);
+  if (status) {
+    amArr.unshift(y);
+  }
   for (let i = 0; i < amArr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yOffset - amArr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(amArr[i])})`,
+        i + 5,
+        yOffset - amArr[i] - 5
+      );
+      context.arc(i, yOffset - amArr[i], 5, 0, 2 * PI);
+    }
     context.fill();
     context.closePath();
     if (amArr.length > oscilloscopeCanvas.width) {
@@ -417,3 +438,13 @@ graphRep.addEventListener("click", () => {
   heading.innerHTML = graphType;
   drawSpectrum();
 });
+
+toggle.addEventListener("click", () => {
+  status = !status;
+  if (status) {
+    toggle.innerHTML = "Pause";
+  } else {
+    toggle.innerHTML = "Play";
+  }
+});
+ 
