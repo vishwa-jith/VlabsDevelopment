@@ -59,10 +59,42 @@ let parameters = [
   },
 ];
 
+// creates line with arrow heads
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
 // Plot Graph Points
 const drawSignal = (context, messageAmp, frequency, t, arr, duty, sawYPos) => {
   let y = messageAmp * Math.cos(2 * PI * frequency * t);
   arr.unshift(y);
+  context.font = "16px Arial";
+  context.fillText("m(t)", 10, 20);
+  context.fillText("time(t)", 550, 65);
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
   var prev = 0;
   for (let i = 0; i < arr.length; i++) {
     let val = (duty * messageAmp * 2) / 100 - messageAmp;
@@ -75,6 +107,14 @@ const drawSignal = (context, messageAmp, frequency, t, arr, duty, sawYPos) => {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(arr[i])})`,
+        i + 5,
+        yPostOff - yPostOff / 2 - arr[i] - 5
+      );
+      context.arc(i, yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
+    }
     context.stroke();
     context.fill();
     context.closePath();
@@ -94,6 +134,21 @@ const drawPPMSignal = (context, sawYPos) => {
   context.lineTo(WIDTH, yPostOff - yPostOff / 2);
   context.closePath();
   context.stroke();
+  context.font = "16px Arial";
+  context.fillText("ppm(t)", 10, 20);
+  context.fillText("time(t)", 550, 65);
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    oscilloscopeCanvas.height / 2,
+    oscilloscopeCanvas.width,
+    oscilloscopeCanvas.height / 2
+  );
+  context.stroke();
+  context.closePath();
+
   for (let i = 1; i < sawYPos.length; i++) {
     context.beginPath();
     context.moveTo(sawYPos[i - 1][0] + 50, yPostOff - yPostOff / 2);

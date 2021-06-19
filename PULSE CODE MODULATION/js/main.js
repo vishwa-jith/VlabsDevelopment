@@ -94,7 +94,7 @@ const drawSignal = (amplitude, frequency, t, arr) => {
       context.fillText(
         `(${i}, ${parseInt(arr[i])})`,
         i + 5,
-        yPostOff - yPostOff / 2 - arr[i] - 5
+        2 * yPostOff - yPostOff / 2 - arr[i] - 5
       );
       context.arc(i, 2 * yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
     }

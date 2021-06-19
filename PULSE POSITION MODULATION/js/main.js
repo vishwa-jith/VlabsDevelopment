@@ -51,6 +51,14 @@ const drawSignal = (amplitude, frequency, t, arr) => {
     context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, 2 * yPostOff - yPostOff / 2 - arr[i], 2, 0, 2 * PI);
+    if (i % 250 == 0) {
+      context.fillText(
+        `(${i}, ${parseInt(arr[i])})`,
+        i + 5,
+        2 * yPostOff - yPostOff / 2 - arr[i] - 5
+      );
+      context.arc(i, 2 * yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
+    }
     context.stroke();
     context.fill();
     context.closePath();
@@ -59,6 +67,74 @@ const drawSignal = (amplitude, frequency, t, arr) => {
     }
     prev = arr[i];
   }
+};
+
+// Draws Line with Arrow Heads
+function canvas_arrow(context, fromx, fromy, tox, toy) {
+  var headlen = 10;
+  var dx = tox - fromx;
+  var dy = toy - fromy;
+  var angle = Math.atan2(dy, dx);
+  context.moveTo(fromx, fromy);
+  context.lineTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle - Math.PI / 6),
+    toy - headlen * Math.sin(angle - Math.PI / 6)
+  );
+  context.moveTo(tox, toy);
+  context.lineTo(
+    tox - headlen * Math.cos(angle + Math.PI / 6),
+    toy - headlen * Math.sin(angle + Math.PI / 6)
+  );
+}
+
+// Displays Signal Labels
+const displaySignalLabel = () => {
+  context.beginPath();
+  context.fillStyle = darkCyan;
+  context.font = "16px Arial";
+  context.fillText("b(t)", 10, 20);
+  context.fillText("m(t)", 10, 2 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("time(t)", 550, 2 * yPostOff - yPostOff / 2 - 20);
+  context.fillText("message", 530, 2 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("pwm(t)", 10, 3 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("time(t)", 550, 3 * yPostOff - yPostOff / 2 - 20);
+  context.fillText("pwm signal", 510, 3 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("ppm signal", 510, 4 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("ppm(t)", 10, 4 * yPostOff - yPostOff / 2 - 75);
+  context.fillText("time(t)", 550, 4 * yPostOff - yPostOff / 2 - 20);
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    yPostOff / 2,
+    oscilloscopeCanvas.width,
+    yPostOff / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    2 * yPostOff - yPostOff / 2,
+    oscilloscopeCanvas.width,
+    2 * yPostOff - yPostOff / 2
+  );
+  context.stroke();
+  context.closePath();
+  context.beginPath();
+  context.strokeStyle = darkCyan;
+  canvas_arrow(
+    context,
+    0,
+    3 * yPostOff - yPostOff / 2,
+    oscilloscopeCanvas.width,
+    3 * yPostOff - yPostOff / 2
+  );
 };
 
 // Plot PWM Graph Points
@@ -168,6 +244,7 @@ function loop() {
   context.clearRect(0, 0, WIDTH, HEIGHT);
   drawMessageSignal();
   drawCarrierSignal(t);
+  displaySignalLabel();
   drawPWM();
   drawPPM();
   if (c % 50 == 0) {

@@ -84,8 +84,8 @@ function displaySignalLabel(context) {
   context.beginPath();
   context.fillStyle = darkCyan;
   context.font = "16px Arial";
-  context.fillText("am(t)", 10, 20);
-  context.fillText("am(t)", 550, 65);
+  context.fillText("fm(t)", 10, 20);
+  context.fillText("time(t)", 550, 65);
   context.closePath();
   context.beginPath();
   context.fillStyle = darkCyan;
@@ -217,7 +217,7 @@ canvas.forEach((item) => {
       let y = amplitude * Math.cos(2 * PI * frequency * t);
       context.fillText("time(t)", 550, 65);
       arr.unshift(y);
-      context.beginPath(); 
+      context.beginPath();
       context.fillStyle = darkCyan;
       canvas_arrow(
         context,
