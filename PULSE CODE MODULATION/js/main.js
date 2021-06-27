@@ -7,6 +7,7 @@ let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
 // Initialization
 let messageAmp = 0;
 let messageFreq = 100;
+let status = false;
 
 // Colors
 let darkCyan = "#00796b";
@@ -94,9 +95,9 @@ const drawSignal = (amplitude, frequency, t, arr) => {
       context.fillText(
         `(${i}, ${parseInt(arr[i])})`,
         i + 5,
-        2 * yPostOff - yPostOff / 2 - arr[i] - 5
+        yPostOff - yPostOff / 2 - arr[i] - 5
       );
-      context.arc(i, 2 * yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
+      context.arc(i, yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
     }
     context.stroke();
     context.fill();
@@ -257,7 +258,9 @@ function loop() {
   }
   t += PI / 180 / 400;
   c += 1;
-  requestAnimationFrame(loop);
+  if (status) {
+    requestAnimationFrame(loop);
+  }
 }
 loop();
 
@@ -287,3 +290,13 @@ amplitudeMessageDown.addEventListener("click", () => {
 });
 
 messageSlider.addEventListener("change", handleAmplitudeMessage);
+
+toggle.addEventListener("click", () => {
+  status = !status;
+  loop();
+  if (status) {
+    toggle.innerHTML = "Pause";
+  } else {
+    toggle.innerHTML = "Play";
+  }
+});

@@ -11,10 +11,12 @@ let binInput6 = document.querySelector("#bin6");
 let binInput7 = document.querySelector("#bin7");
 let binInput8 = document.querySelector("#bin8");
 let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
+let toggle = document.querySelector("#toggle");
 
 // Initialization
 let carrierAmp = 0;
 let carrierFreq = 100;
+let status = false;
 
 // Colors
 let darkCyan = "#00796b";
@@ -167,7 +169,9 @@ function loop() {
   ASKSignal(phaseDiff);
   phaseDiff += 0.05;
   t += PI / 180 / 100;
-  requestAnimationFrame(loop);
+  if (status) {
+    requestAnimationFrame(loop);
+  }
   context.font = "16px Arial";
   context.fillText("b(t)", 10, 20);
   context.fillText("c(t)", 10, oscilloscopeCanvas.height / 3 + 20);
@@ -275,4 +279,14 @@ binInput8.addEventListener("click", () => {
   messageBits[7] = messageBits[7] + messageBits[7] ? 0 : 1;
   binInput8.innerHTML = messageBits[7];
   initializeMapObj();
+});
+
+toggle.addEventListener("click", () => {
+  status = !status;
+  loop();
+  if (status) {
+    toggle.innerHTML = "Pause";
+  } else {
+    toggle.innerHTML = "Play";
+  }
 });

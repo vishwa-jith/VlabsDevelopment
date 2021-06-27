@@ -152,9 +152,7 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
 // Plot Graph Points
 const drawSignal = (amplitude, frequency, t, arr, yOffset) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  if (status) {
-    arr.unshift(y);
-  }
+  arr.unshift(y);
   for (let i = 0; i < arr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
@@ -201,11 +199,9 @@ const drawCarrierSignal = (t) => {
 const drawFrequencyModulationSignal = (t, amArr, yOffset) => {
   let tempMessageValue = beta * Math.sin(2 * PI * messageFreq * t);
   let y = carrierAmp * Math.cos(2 * PI * carrierFreq * t + tempMessageValue);
-  if (status) {
-    amArr.unshift(y);
-  }
+  amArr.unshift(y);
   for (let i = 0; i < amArr.length; i++) {
-    context.beginPath(); 
+    context.beginPath();
     context.fillStyle = darkCyan;
     context.arc(i, yOffset - amArr[i], 2, 0, 2 * PI);
     if (i % 250 == 0) {
@@ -241,7 +237,9 @@ function loop() {
   context.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
   t += PI / 180 / 100;
   drawSignals(t);
-  requestAnimationFrame(loop);
+  if (status) {
+    requestAnimationFrame(loop);
+  }
 }
 loop();
 
@@ -347,6 +345,7 @@ graphRep.addEventListener("click", () => {
 
 toggle.addEventListener("click", () => {
   status = !status;
+  loop();
   if (status) {
     toggle.innerHTML = "Pause";
   } else {

@@ -9,6 +9,7 @@ let oscilloscopeCanvas = document.querySelector("#oscilloscope-canvas");
 // Initialization
 let messageAmp = 0;
 let messageFreq = 100;
+let status = false;
 
 // Colors
 let darkCyan = "#00796b";
@@ -217,7 +218,9 @@ function loop() {
   }
   t += PI / 180 / 200;
   c += 1;
-  requestAnimationFrame(loop);
+  if (status) {
+    requestAnimationFrame(loop);
+  }
 }
 loop();
 
@@ -255,3 +258,13 @@ amplitudeMessageDown.addEventListener("click", () => {
 
 messageSlider.addEventListener("change", handleAmplitudeMessage);
 dutyCycleSlider.addEventListener("change", handleDutyCycle);
+
+toggle.addEventListener("click", () => {
+  status = !status;
+  loop();
+  if (status) {
+    toggle.innerHTML = "Pause";
+  } else {
+    toggle.innerHTML = "Play";
+  }
+});

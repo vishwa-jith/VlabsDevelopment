@@ -195,9 +195,7 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
 // Plot Graph Points
 const drawSignal = (amplitude, frequency, t, arr, yOffset) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  if (status) {
-    arr.unshift(y);
-  }
+  arr.unshift(y);
   for (let i = 0; i < arr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
@@ -246,9 +244,7 @@ const drawAmplitudeModulationSignal = (t, amArr, yOffset) => {
   let y =
     (parseInt(carrierAmp) + tempMessageValue) *
     Math.cos(2 * PI * carrierFreq * t);
-  if (status) {
-    amArr.unshift(y);
-  }
+  amArr.unshift(y);
   for (let i = 0; i < amArr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
@@ -286,7 +282,9 @@ function loop() {
   context.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
   t += PI / 180 / 100;
   drawSignals(t);
-  requestAnimationFrame(loop);
+  if (status) {
+    requestAnimationFrame(loop);
+  }
 }
 loop();
 
@@ -441,10 +439,10 @@ graphRep.addEventListener("click", () => {
 
 toggle.addEventListener("click", () => {
   status = !status;
+  loop();
   if (status) {
     toggle.innerHTML = "Pause";
   } else {
     toggle.innerHTML = "Play";
   }
 });
- 

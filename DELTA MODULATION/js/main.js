@@ -38,9 +38,7 @@ var WIDTH = 600,
 // Plot Graph Points
 const drawSignal = (amplitude, frequency, t, arr) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  if (status) {
-    arr.unshift(y);
-  }
+  arr.unshift(y);
   for (let i = 0; i < arr.length; i++) {
     context.beginPath();
     context.fillStyle = darkCyan;
@@ -54,6 +52,7 @@ const drawSignal = (amplitude, frequency, t, arr) => {
         yPostOff - yPostOff / 2 - arr[i] - 5
       );
       context.arc(i, yPostOff - yPostOff / 2 - arr[i], 5, 0, 2 * PI);
+      context.fill();
     }
     context.closePath();
     if (arr.length > WIDTH) {
@@ -92,9 +91,7 @@ const drawBinaryMessage = (i, bin) => {
 // Plot DELTA Graph Points
 const drawDELTASignal = (amplitude, frequency, t, arr) => {
   let y = amplitude * Math.cos(2 * PI * frequency * t);
-  if (status) {
-    arr.unshift(y);
-  }
+  arr.unshift(y);
   let prev = -amplitude;
   for (let i = 0; i < arr.length; i++) {
     if (i % qLevel == 0) {
@@ -181,18 +178,9 @@ function loop() {
   );
   context.stroke();
   context.closePath();
-  context.beginPath();
-  context.strokeStyle = darkCyan;
-  canvas_arrow(
-    context,
-    0,
-    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6,
-    oscilloscopeCanvas.width,
-    oscilloscopeCanvas.height - oscilloscopeCanvas.height / 6
-  );
-  context.stroke();
-  context.closePath();
-  requestAnimationFrame(loop);
+  if (status) {
+    requestAnimationFrame(loop);
+  }
 }
 loop();
 
@@ -225,6 +213,7 @@ messageSlider.addEventListener("change", handleAmplitudeMessage);
 
 toggle.addEventListener("click", () => {
   status = !status;
+  loop();
   if (status) {
     toggle.innerHTML = "Pause";
   } else {
